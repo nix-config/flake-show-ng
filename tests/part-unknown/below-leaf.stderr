@@ -1,0 +1,2 @@
+fsn: unknown part 'packages.x86_64-linux.hello.name'
+  cannot descend past 'packages.x86_64-linux.hello' (not an attrset, or an evaluation-failed leaf)

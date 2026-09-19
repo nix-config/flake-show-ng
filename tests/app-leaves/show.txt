@@ -1,0 +1,7 @@
+[1mpath:/home/admin/workspace/nix-config/repositories/nix-config/flake-show-ng/tests/app-leaves?lastModified=1789805463&narHash=sha256-oyGP4eXIkFAZfmygoPYMCXlolQQdNtvvvF/8a0vNZB4%3D[0m
+[32;1m├───[0m[1mapps[0m
+[32;1m│   └───[0m[1mx86_64-linux[0m
+[32;1m│       ├───[0m[1mnoDesc[0m: app: [1mno description[0m
+[32;1m│       └───[0m[1mwithDesc[0m: app: [1man app with a description[0m
+[32;1m└───[0m[1mdefaultApp[0m
+[32;1m    └───[0m[1mx86_64-linux[0m: app: [1mthe default app[0m

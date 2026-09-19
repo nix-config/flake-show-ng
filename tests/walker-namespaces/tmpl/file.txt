@@ -1,0 +1,1 @@
+walker-namespaces fixture template.
