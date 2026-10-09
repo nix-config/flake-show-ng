@@ -9,4 +9,5 @@ pub mod error;
 pub mod model;
 pub mod nix;
 pub mod pipeline;
+pub mod prune;
 pub mod render;

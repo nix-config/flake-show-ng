@@ -1,9 +1,9 @@
 //! `fsn` integration suite root: env gate, prerequisites, and the shared driver.
 //!
 //! Every scenario is data in `common::scenarios::SCENARIOS`; this file only
-//! decides whether the suite runs (the `FSN_IT` gate) and hands the fixture root
-//! to the harness.  When `FSN_IT` is unset the suite prints its skip line and
-//! succeeds, which keeps bare `cargo test` and the `nix build` sandbox-safe.
+//! decides whether the suite runs and hands the fixture root to the harness.
+//! The suite runs by default; `FSN_SKIP_INTEGRATION=1` disables it, printing a skip line and
+//! succeeding.
 
 use std::env;
 
@@ -12,8 +12,8 @@ mod common;
 
 #[test]
 fn integration_scenarios() {
-    if env::var("FSN_IT").ok().as_deref() != Some("1") {
-        println!("skip: integration tests are gated behind FSN_IT=1");
+    if env::var("FSN_SKIP_INTEGRATION").ok().as_deref() == Some("1") {
+        println!("skip: integration tests disabled by FSN_SKIP_INTEGRATION=1");
         return;
     }
     let tests = common::tests_dir();

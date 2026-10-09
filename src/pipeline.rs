@@ -2,7 +2,7 @@
 
 use std::path::Path;
 
-use crate::cli::{self, Args, Format};
+use crate::cli::{self, Args};
 use crate::error::{Error, stderr_prefix};
 use crate::model::UnknownPart;
 use crate::{nix, render};
@@ -40,10 +40,8 @@ pub fn run(args: Args) -> Result<String, Error> {
         return Err(Error::Silent);
     }
 
-    match args.format {
-        Format::Text => Ok(render::text::render(&locked_ref, &walker.tree)),
-        Format::Json => render::json::render(&locked_ref, &parts.roots, &walker.tree),
-    }
+    let tree = crate::prune::prune_empty(walker.tree);
+    Ok(render::text::render(&locked_ref, &tree))
 }
 
 /// `fsn` only acts on the current directory, so a missing `flake.nix` is the

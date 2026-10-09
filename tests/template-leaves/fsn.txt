@@ -1,0 +1,4 @@
+[1mpath:/tmp/fsn-record-8AdfFF/template-leaves?lastModified=1791549319&narHash=sha256-N7G9W6eytFNOQQ8X47wrEoy/BpThMNRmPL4oy1vLwUs%3D[0m
+[32;1m└───[0m[1mtemplates[0m
+[32;1m    ├───[0m[1mnoDesc[0m: template: [1mno description[0m
+[32;1m    └───[0m[1mwithDesc[0m: template: [1ma template with a description[0m

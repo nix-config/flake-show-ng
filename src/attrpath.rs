@@ -6,13 +6,13 @@
 use std::fmt;
 use std::str::FromStr;
 
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 /// A validated sequence of attribute names, e.g. `legacyPackages.x86_64-linux`.
 ///
 /// On the wire it is a component array (`["a","b"]`); the dotted form exists
 /// only through [`Display`](std::fmt::Display).
-#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, Deserialize)]
 #[serde(transparent)]
 pub struct AttrPath(Vec<String>);
 

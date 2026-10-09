@@ -1,4 +1,4 @@
-use clap::{Parser, ValueEnum};
+use clap::Parser;
 
 use crate::attrpath::AttrPath;
 
@@ -21,16 +21,6 @@ pub struct Cli {
     )]
     pub parts: Vec<AttrPath>,
 
-    /// Output format
-    #[arg(
-        short = 'f',
-        long = "format",
-        value_name = "FORMAT",
-        value_enum,
-        default_value = "text"
-    )]
-    pub format: Format,
-
     /// Allow import-from-derivation (IFD; may trigger builds)
     #[arg(short = 'a', long = "allow-ifd")]
     pub allow_ifd: bool,
@@ -45,8 +35,7 @@ pub struct Cli {
 
 const HELP_TAIL: &str = "\
 Examples:
-  fsn                                    # complete tree of the current directory's flake (text)
-  fsn -f json                            # JSON output (schema v1)
+  fsn                                    # complete tree of the current directory's flake
   fsn -p packages.x86_64-linux           # one subtree
   fsn -p packages -p legacyPackages      # multiple parts, rendered as one forest
   fsn -p packages,legacyPackages         # same, comma-separated
@@ -54,16 +43,9 @@ Examples:
 
 Runtime dependency: nix >= 2.34.8; fsn only acts on the current directory and does not accept a flake path.";
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, ValueEnum)]
-pub enum Format {
-    Text,
-    Json,
-}
-
 /// Fully resolved command line: everything `pipeline::run` needs.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Args {
-    pub format: Format,
     pub allow_ifd: bool,
     pub requested: Vec<AttrPath>,
 }
@@ -71,7 +53,6 @@ pub struct Args {
 impl Cli {
     pub fn into_args(self) -> Args {
         Args {
-            format: self.format,
             allow_ifd: self.allow_ifd,
             requested: self.parts,
         }
@@ -132,14 +113,14 @@ mod tests {
     fn parses_repeated_and_comma_separated_parts() {
         let cli = Cli::try_parse_from(["fsn", "-p", "a.b,c", "-p", "d"]).unwrap();
         assert_eq!(cli.parts, vec![p("a.b"), p("c"), p("d")]);
-        assert_eq!(cli.format, Format::Text);
         assert!(!cli.allow_ifd);
     }
 
     #[test]
-    fn parses_format_and_allow_ifd() {
-        let cli = Cli::try_parse_from(["fsn", "-f", "json", "-a"]).unwrap();
-        assert_eq!(cli.format, Format::Json);
+    fn parses_allow_ifd() {
+        let cli = Cli::try_parse_from(["fsn", "-a"]).unwrap();
+        assert!(cli.allow_ifd);
+        let cli = Cli::try_parse_from(["fsn", "--allow-ifd"]).unwrap();
         assert!(cli.allow_ifd);
     }
 
@@ -171,9 +152,8 @@ mod tests {
 
     #[test]
     fn into_args_carries_requested_parts() {
-        let cli = Cli::try_parse_from(["fsn", "-f", "json", "-p", "a.b"]).unwrap();
+        let cli = Cli::try_parse_from(["fsn", "-p", "a.b"]).unwrap();
         let args = cli.into_args();
-        assert_eq!(args.format, Format::Json);
         assert!(!args.allow_ifd);
         assert_eq!(args.requested, vec![p("a.b")]);
     }

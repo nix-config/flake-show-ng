@@ -1,4 +1,4 @@
-[1mpath:/tmp/opencode/p3-rec/part-selection?lastModified=1789816768&narHash=sha256-naT8IbpT8T/tNi%2Blx18AEwmhh6%2BWQNUFXA%2BPODMCHMw%3D[0m
+[1mpath:/tmp/fsn-record-8AdfFF/part-selection?lastModified=1791549320&narHash=sha256-LGdsehaZ2YlgRwY1h7qtWm%2BhWOziSUOJbBaDqzhtW3s%3D[0m
 [32;1m└───[0m[1mpackages[0m
 [32;1m    └───[0m[1mx86_64-linux[0m
 [32;1m        └───[0m[1mhello[0m: package 'hello'
