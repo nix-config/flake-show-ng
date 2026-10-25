@@ -1,6 +1,9 @@
 {
   lib,
+  git,
+  nixVersions,
   rustPlatform,
+  writableTmpDirAsHomeHook,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
@@ -9,9 +12,19 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   src = ../../..;
 
-  cargoHash = "sha256-BfaHUQKJ6jGP1KmWPnX24JLETG08F2CU/I36VJr2+n0=";
+  cargoHash = "sha256-rmXwEKsugvsmCqu4GdHTH6ckQ39wauny/mR1ZU67Pvo=";
 
   doCheck = true;
+
+  nativeCheckInputs = [
+    git
+    nixVersions.nix_2_34
+    writableTmpDirAsHomeHook
+  ];
+
+  preCheck = ''
+    export NIX_CONFIG="extra-experimental-features = nix-command flakes"
+  '';
 
   meta = {
     description = "Show the complete tree of a flake's outputs";

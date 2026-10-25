@@ -1,0 +1,9 @@
+[1mpath:/tmp/fsn-record-8AdfFF/baseline-tree?lastModified=1791549319&narHash=sha256-oblpdbcxHw6y6MGxZ1zAD5jwm2w80ueU/Wth4peH/f4%3D[0m
+[32;1m├───[0m[1mlegacyPackages[0m
+[32;1m│   └───[0m[1mx86_64-linux[0m
+[32;1m│       └───[0m[1mnested[0m
+[32;1m│           └───[0m[1mset[0m
+[32;1m│               └───[0m[1ma[0m
+[32;1m└───[0m[1mpackages[0m
+[32;1m    └───[0m[1mx86_64-linux[0m
+[32;1m        └───[0m[1mhello[0m: package 'hello'

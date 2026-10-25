@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "nixVersion": "nix (Nix) 2.34.8",
+  "flakeRef": "path:. (recorded with cwd = the scenario directory under tests/; flake.lock is not created, fixtures have no inputs)",
+  "sha256Format": "sha256:<hex> over raw file bytes",
+  "commands": {
+    "text": "cd tests/{scenario} && nix flake show --legacy --all-systems path:. > show.txt 2> /tmp/fsn-record-{scenario}.stderr; echo $?  # app-leaves/show.txt is the independent oracle golden; only ifd-denied records \"exits.text\"",
+    "fsn": "cp -R tests/{scenario} <tmp-outside-repo> && cd <tmp-outside-repo> && <repo>/target/debug/fsn [<parts>] > tests/{scenario}/fsn.txt 2> tests/{scenario}/fsn.stderr; echo $?  # fsn.txt is the recorded text golden, frozen once from the real binary; the harness compares everything after the first newline because the root line embeds the temp path"
+  },
+  "fixtures": {
+    "app-leaves": {
+      "notes": "apps.x86_64-linux.withDesc carries meta.description; noDesc has none (show JSON leaf is {\"type\":\"app\"}, text 'app: no description'); defaultApp.x86_64-linux is an app leaf with description. fsn must emit description or null. show.txt (raw `nix flake show` text) is the independent end-to-end oracle: the harness compares its ANSI-stripped body to fsn's.",
+      "fixtureFiles": {
+        "flake.nix": "sha256:7a7560e39ec1fb0351d611f245ddf126aed78a25dd9f5aa8fa2435d11f115e66"
+      },
+      "goldenFiles": {
+        "show.txt": "sha256:50d6b70a07f6e4d0df329336c5f1c92d88cc0113a6f399f9f84af0c984fdfde3"
+      }
+    },
+    "baseline-tree": {
+      "notes": "emptyTop -> show {\"type\":\"unknown\"}; empty apps/nixosConfigurations/outputs pruned entirely; legacyPackages.x86_64-linux.nested.set.a is deeper than show's white-list (show emits nested:{}); packages.hello is a derivation; packages.aarch64-linux is an empty set pruned by show. fsn.txt pins the pruned text rendering.",
+      "fixtureFiles": {
+        "flake.nix": "sha256:00d97cbea91616420df2d727a741bfe87673f9f0827fd72198b42aaf0f791e5a"
+      },
+      "goldenFiles": {
+        "fsn.txt": "sha256:8720bd63af0634aa2d06075f3b8200ad85ab86cabda3fcf8c976ec0f874fbe4a"
+      }
+    },
+    "config-leaves": {
+      "notes": "Non-empty config namespaces: nixosConfigurations.host1 aligns with show (\"type\":\"nixos-configuration\"); homeConfigurations is an fsn extension namespace show emits as {\"type\":\"unknown\"} without recursing. fsn renders both host/user as kind:'config' with configType nixos/home-manager (walker stops at depth 2 for these namespaces); fsn.txt pins the text rendering.",
+      "fixtureFiles": {
+        "flake.nix": "sha256:68233760179ca9fd6181c215aa718ea1a8e25fd8bdbdb099a822fe332d8f70e8"
+      },
+      "goldenFiles": {
+        "fsn.txt": "sha256:bafcdfa670cba6cdee436278dc56a97d2452a54531946457e39c82d4bc8e72ea"
+      }
+    },
+    "eval-errors": {
+      "notes": "packages.x86_64-linux.broken = throw => nix flake show ABORTS with exit 1 (throw/assert is not caught by show). fsn must exit 0 and mark the leaf kind:'error' while still rendering the sibling derivation; fsn.txt records that text rendering byte-for-byte.",
+      "fixtureFiles": {
+        "flake.nix": "sha256:e873a17ec7af71c865d5111eaa8515bd423e9ff3689fed0933651c5cb406ca45"
+      },
+      "goldenFiles": {
+        "fsn.txt": "sha256:1f3c4933c75eec20fec4639349b7385194a865b0a8f2f04749c32f4ca255f889"
+      }
+    },
+    "git-dirty-root-line": {
+      "notes": "The fixture is copied to a temp dir which is then made a dirty git worktree (git init; empty commit; `git add -N flake.nix`), so the lockedRef/root line is `git+file://<tmp>` (random path, not recordable). tests/integration.rs captures live `nix flake show --legacy --all-systems` (text) in the same worktree and compares the root line byte-for-byte; the body is compared byte-for-byte against the recorded fsn.txt.",
+      "commands": {
+        "setup": "cp -R tests/git-dirty-root-line <tmp> && git init -q && git -c user.email=t@t -c user.name=t -c commit.gpgsign=false commit -q --allow-empty -m init && git add -N flake.nix",
+        "text": "cd <tmp> && nix flake show --legacy --all-systems . > <tmp-out>/git-dirty-root-line.show.txt 2> <tmp-out>/git-dirty-root-line.show.stderr",
+        "fsn": "cd <tmp-dirty-worktree> && <repo>/target/debug/fsn > tests/git-dirty-root-line/fsn.txt  # record the body from the same dirty-worktree shape; the root line embeds the temp path and is skipped"
+      },
+      "fixtureFiles": {
+        "flake.nix": "sha256:ba3d1febbcf4cc1e3ce74027e342aceb9620c925e87a463fccc30dea0a770677"
+      },
+      "goldenFiles": {
+        "fsn.txt": "sha256:c2ca88b5a740cab326151b885ec46f29a7c46537f2dd4022af4e3120e1be18d3"
+      }
+    },
+    "ifd-denied": {
+      "notes": "packages.x86_64-linux.ifd is builtins.readFile (derivation ...) i.e. IFD. show exits 0 and emits {} for the leaf; text says 'omitted due to use of import from derivation'. fsn must FAIL by default (IFD disabled) with a non-empty, IFD-mentioning stderr. No static golden is kept (the failure is checked structurally).",
+      "exits": {
+        "text": 0
+      },
+      "fixtureFiles": {
+        "flake.nix": "sha256:ffd7446103c73534bf0424136a54d2614c64e2a604a46def782e23712acf7cd6"
+      },
+      "goldenFiles": {}
+    },
+    "non-derivation-leaves": {
+      "notes": "all three leaves (packages/checks/devShells.<sys>.<name> = { name = ...; }) are not derivations: show warns '<attrpath>.name is not a derivation' and omits the leaf. fsn renders the attrset and its string children (extension); fsn.txt pins that text rendering.",
+      "fixtureFiles": {
+        "flake.nix": "sha256:9f291b8f549546a4dc92b97e351aecfb097f3dcc83883305eee0155786f17ea2"
+      },
+      "goldenFiles": {
+        "fsn.txt": "sha256:9c3e17b8a6716b42bd53f751be155398c72b01bd6356e5b410a9a15d053d982b"
+      }
+    },
+    "template-leaves": {
+      "notes": "templates.noDesc has no description => upstream nix flake show ABORTS with exit 1 (error: attribute 'templates.noDesc.description' does not exist). fsn extends the semantics and renders noDesc with description:null; fsn.txt records that text rendering byte-for-byte.",
+      "fixtureFiles": {
+        "flake.nix": "sha256:ed74ee8aaa21c08d73c06a59395e55171ff8e05d774680f44c0c0a6c55d81bfb",
+        "tmpl/file.txt": "sha256:6d39eb4ccb7942e6fa4cf8131fd66e25228c155819bb4a2dfaf2d4d65b140bba"
+      },
+      "goldenFiles": {
+        "fsn.txt": "sha256:f2ad99570cd43cb88e3cfa497b92716961c67a3df5ff584178445d14eb2052a0"
+      }
+    },
+    "part-selection": {
+      "notes": "Part selection: `-p packages.x86_64-linux -p packages -p packages.x86_64-linux` reports two swallow notices (the descendant covered by its ancestor, in resolution order) and renders only the packages subtree; apps.x86_64-linux is not rendered. fsn.txt is the recorded stdout (line 1, the root line, embeds the temp path and is skipped; the body is compared byte-for-byte) and fsn.stderr the recorded notice bytes, compared exactly.",
+      "fixtureFiles": {
+        "flake.nix": "sha256:895f80326182e0d075c2165b01675a086a151e22ef6a1d9706f7e34557238214"
+      },
+      "goldenFiles": {
+        "fsn.txt": "sha256:789850243ed753a4d54604136bc80c213ad2dfd228af955d0b4a5849d61c7eb1",
+        "fsn.stderr": "sha256:08d9a0b1e36da1c90a9be32938a1d9163e11931cc403d1213721bc03f77023d9"
+      }
+    },
+    "part-unknown": {
+      "notes": "Two rows share this fixture. part-unknown-candidates: `-p nope.x`, whose failAt is the flake-outputs attrset, so stderr pins the complete sibling candidate list and its order (`apps, checks, packages`). part-unknown-below-leaf: `-p packages.x86_64-linux.hello.name`, a part strictly below a derivation leaf, so stderr pins the empty-candidates branch (`cannot descend past '...' (not an attrset, or an evaluation-failed leaf)`). Both exit 1 with empty stdout; the full stderr bytes are compared exactly.",
+      "fixtureFiles": {
+        "flake.nix": "sha256:0a8bb4144ff7fe5c05099f00b6e2a964853832dbf6b9503a08fb3e6663e10f26"
+      },
+      "goldenFiles": {
+        "candidates.stderr": "sha256:cb49231cf0eb472a60d4897723004a8cd86da5d6e28bff3f1072cd5274efc92c",
+        "below-leaf.stderr": "sha256:751bca59da11f55e151fe888b2d029a0afcca8fee946fd8a6e20a8ad740beec0"
+      }
+    },
+    "walker-namespaces": {
+      "notes": "Real walker label coverage (Gate 1 M6 / Gate 2 F5): devShell/devShells -> development-environment; packages/legacyPackages/defaultPackage/formatter -> package; checks (deep) and hydraJobs keep the plain derivation label (absent). Also covers nixosConfigurations/homeConfigurations/darwinConfigurations config leaves (configType nixos/home-manager/darwin), defaultTemplate/templates, and packages/legacyPackages derivations. fsn.txt pins every label, description and configType in the text rendering.",
+      "fixtureFiles": {
+        "flake.nix": "sha256:0e574064c4b13ca47c2449e797b678b9157fb1f770b50ebb0049a01858e9fcd2",
+        "tmpl/file.txt": "sha256:3a1ccd3ca7facfe69ed4c17fae481e5192db97fbcb082288215bd4bb61f937bf"
+      },
+      "goldenFiles": {
+        "fsn.txt": "sha256:a00bdcd1e3361b3d04397a1aeaa1c81cfcb1351e3dee782e87972d1f27b90a4c"
+      }
+    }
+  }
+}
