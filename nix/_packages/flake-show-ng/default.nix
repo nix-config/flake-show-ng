@@ -8,11 +8,11 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "flake-show-ng";
-  version = "0.1.0";
+  version = "0.1.1";
 
   src = ../../..;
 
-  cargoHash = "sha256-ByjLsbuoTNPAM1CW8EheGKiR/vWaHwsflDXYZ9AqAdQ=";
+  cargoHash = "sha256-CjI5FxNDW9TWjTigQxtNpuoBHjdWhVB5Dm5YhHF/PFQ=";
 
   doCheck = true;
 
