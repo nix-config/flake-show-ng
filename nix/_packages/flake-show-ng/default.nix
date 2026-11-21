@@ -1,6 +1,9 @@
 {
   lib,
+  git,
+  nixVersions,
   rustPlatform,
+  writableTmpDirAsHomeHook,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
@@ -9,12 +12,24 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   src = ../../..;
 
-  cargoHash = "sha256-BfaHUQKJ6jGP1KmWPnX24JLETG08F2CU/I36VJr2+n0=";
+  cargoHash = "sha256-ByjLsbuoTNPAM1CW8EheGKiR/vWaHwsflDXYZ9AqAdQ=";
 
   doCheck = true;
 
+  nativeCheckInputs = [
+    git
+    nixVersions.nix_2_34
+    writableTmpDirAsHomeHook
+  ];
+
+  preCheck = ''
+    export NIX_CONFIG="extra-experimental-features = nix-command flakes"
+  '';
+
   meta = {
     description = "Show the complete tree of a flake's outputs";
+    homepage = "https://github.com/nix-config/flake-show-ng";
+    changelog = "https://github.com/nix-config/flake-show-ng/releases/tag/v${finalAttrs.version}";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ knightfemale ];
     mainProgram = "fsn";
