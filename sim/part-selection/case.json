@@ -1,0 +1,3 @@
+{
+  "args": ["-p", "packages.x86_64-linux", "-p", "packages", "-p", "packages.x86_64-linux"]
+}

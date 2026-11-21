@@ -1,0 +1,2 @@
+fsn: unknown part 'nope.x'
+  sibling candidates under flake outputs: apps, checks, packages

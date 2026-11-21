@@ -1,0 +1,13 @@
+[1mpath:/tmp/fsn-record-8AdfFF/non-derivation-leaves?lastModified=1791549319&narHash=sha256-PLXIXkP9aSpRpe6VPUYq7qM1GSY10EirKBSGtF4UvYM%3D[0m
+[32;1m├───[0m[1mchecks[0m
+[32;1m│   └───[0m[1mx86_64-linux[0m
+[32;1m│       └───[0m[1mmkCheck[0m
+[32;1m│           └───[0m[1mname[0m
+[32;1m├───[0m[1mdevShells[0m
+[32;1m│   └───[0m[1mx86_64-linux[0m
+[32;1m│       └───[0m[1mshell[0m
+[32;1m│           └───[0m[1mname[0m
+[32;1m└───[0m[1mpackages[0m
+[32;1m    └───[0m[1mx86_64-linux[0m
+[32;1m        └───[0m[1mnotdrv[0m
+[32;1m            └───[0m[1mname[0m

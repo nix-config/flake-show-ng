@@ -1,0 +1,32 @@
+[1mpath:/tmp/fsn-record-8AdfFF/walker-namespaces?lastModified=1791549319&narHash=sha256-LIyxAtGxoqFI9VuTtcR4zNGdItBEpW8oKeiRFd/8Rcw%3D[0m
+[32;1m├───[0m[1mchecks[0m
+[32;1m│   └───[0m[1mx86_64-linux[0m
+[32;1m│       └───[0m[1mdeep[0m
+[32;1m│           └───[0m[1mleaf[0m: derivation 'chk'
+[32;1m├───[0m[1mdarwinConfigurations[0m
+[32;1m│   └───[0m[1mmac1[0m: [35;1mnix-darwin configuration[0m
+[32;1m├───[0m[1mdefaultPackage[0m
+[32;1m│   └───[0m[1mx86_64-linux[0m: package 'dp'
+[32;1m├───[0m[1mdefaultTemplate[0m: template: [1mdefault template[0m
+[32;1m├───[0m[1mdevShell[0m
+[32;1m│   └───[0m[1mx86_64-linux[0m: development environment 'shell-sing'
+[32;1m├───[0m[1mdevShells[0m
+[32;1m│   └───[0m[1mx86_64-linux[0m
+[32;1m│       └───[0m[1mshell[0m: development environment 'shell'
+[32;1m├───[0m[1mformatter[0m
+[32;1m│   └───[0m[1mx86_64-linux[0m: package 'fmt'
+[32;1m├───[0m[1mhomeConfigurations[0m
+[32;1m│   └───[0m[1muser1[0m: [35;1mHome Manager configuration[0m
+[32;1m├───[0m[1mhydraJobs[0m
+[32;1m│   └───[0m[1mx86_64-linux[0m
+[32;1m│       └───[0m[1mjob[0m: derivation 'job'
+[32;1m├───[0m[1mlegacyPackages[0m
+[32;1m│   └───[0m[1mx86_64-linux[0m
+[32;1m│       └───[0m[1mlegacy[0m: package 'legacy'
+[32;1m├───[0m[1mnixosConfigurations[0m
+[32;1m│   └───[0m[1mhost1[0m: [35;1mNixOS configuration[0m
+[32;1m├───[0m[1mpackages[0m
+[32;1m│   └───[0m[1mx86_64-linux[0m
+[32;1m│       └───[0m[1mpkg[0m: package 'pkg'
+[32;1m└───[0m[1mtemplates[0m
+[32;1m    └───[0m[1mtmpl[0m: template: [1ma template[0m

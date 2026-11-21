@@ -1,0 +1,7 @@
+{
+  "kinds": {
+    "legacyPackages.x86_64-linux.nested.set.a": "int",
+    "legacyPackages.x86_64-linux.nested.set.pkg": "derivation",
+    "packages.x86_64-linux.hello": "derivation"
+  }
+}

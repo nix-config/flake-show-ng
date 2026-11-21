@@ -1,0 +1,4 @@
+{
+  "exit": 1,
+  "stderr_contains": ["ifd", "import from derivation", "allow-ifd"]
+}

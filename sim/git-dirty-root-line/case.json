@@ -1,0 +1,4 @@
+{
+  "setup": ["git init -q", "git -c user.email=t@t -c user.name=t -c commit.gpgsign=false commit -q --allow-empty -m init", "git add -N flake.nix"],
+  "git_ref": true
+}

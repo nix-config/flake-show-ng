@@ -1,0 +1,5 @@
+[1mpath:/tmp/fsn-record-8AdfFF/config-leaves?lastModified=1791549319&narHash=sha256-4XrbpxaOvdAyVg8E1GRflTMEdOtGPb9WUI4e%2B9rTRCA%3D[0m
+[32;1m├───[0m[1mhomeConfigurations[0m
+[32;1m│   └───[0m[1muser1[0m: [35;1mHome Manager configuration[0m
+[32;1m└───[0m[1mnixosConfigurations[0m
+[32;1m    └───[0m[1mhost1[0m: [35;1mNixOS configuration[0m

@@ -1,0 +1,8 @@
+{
+  "kinds": {
+    "homeModules.bar": "home-module",
+    "nixosModules.foo": "nixos-module",
+    "overlays.default": "nixpkgs-overlay",
+    "packages.x86_64-linux.hello": "derivation"
+  }
+}

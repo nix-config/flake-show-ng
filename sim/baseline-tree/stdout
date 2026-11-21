@@ -1,0 +1,9 @@
+[1mpath:/tmp/opencode/fsn-record-baseline?lastModified=1795260246&narHash=sha256-4BO8b4CjNFKc0rhPAD8%2BqiH2pftrbQ6uSyYk0Vept/g%3D[0m
+[32;1m├───[0m[1mlegacyPackages[0m
+[32;1m│   └───[0m[1mx86_64-linux[0m
+[32;1m│       └───[0m[1mnested[0m
+[32;1m│           └───[0m[1mset[0m
+[32;1m│               └───[0m[1mpkg[0m: package 'pkg'
+[32;1m└───[0m[1mpackages[0m
+[32;1m    └───[0m[1mx86_64-linux[0m
+[32;1m        └───[0m[1mhello[0m: package 'hello'

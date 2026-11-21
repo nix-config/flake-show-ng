@@ -1,0 +1,5 @@
+[1mpath:/tmp/fsn-record-8AdfFF/eval-errors?lastModified=1791549319&narHash=sha256-jOgEVG2kBi8dyA8dGfJ/8h7LTyAnWQR9%2BujyMEq25Bc%3D[0m
+[32;1m└───[0m[1mpackages[0m
+[32;1m    └───[0m[1mx86_64-linux[0m
+[32;1m        ├───[0m[1mbroken[0m: [31;1merror[0m
+[32;1m        └───[0m[1mfine[0m: package 'fine'

@@ -1,0 +1,4 @@
+{
+  "args": ["-p", "packages.x86_64-linux.hello.name"],
+  "exit": 1
+}

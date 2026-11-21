@@ -1,0 +1,7 @@
+[1mpath:/tmp/opencode/fsn-record-legacy-e?lastModified=1795260274&narHash=sha256-uXFWQEifECswTRtRcpNnoci0ogx5FWQPQhJKgFopobU%3D[0m
+[32;1m└───[0m[1mlegacyPackages[0m
+[32;1m    ├───[0m[1maarch64-darwin[0m
+[32;1m    └───[0m[1mx86_64-linux[0m
+[32;1m        ├───[0m[1mnested[0m
+[32;1m        │   └───[0m[1mgood[0m: package 'good'
+[32;1m        └───[0m[1mpackages[0m

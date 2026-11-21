@@ -1,0 +1,10 @@
+[1mpath:/tmp/opencode/module-labels-record?lastModified=1795255383&narHash=sha256-5l6ZJEANw23v9kmP5gppz8tad3lHq9cCJ82x4q7VgiU%3D[0m
+[32;1m├───[0m[1mhomeModules[0m
+[32;1m│   └───[0m[1mbar[0m: [35;1mHome module[0m
+[32;1m├───[0m[1mnixosModules[0m
+[32;1m│   └───[0m[1mfoo[0m: [35;1mNixOS module[0m
+[32;1m├───[0m[1moverlays[0m
+[32;1m│   └───[0m[1mdefault[0m: [35;1mNixpkgs overlay[0m
+[32;1m└───[0m[1mpackages[0m
+[32;1m    └───[0m[1mx86_64-linux[0m
+[32;1m        └───[0m[1mhello[0m: package 'hello'
