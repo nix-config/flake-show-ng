@@ -10,6 +10,7 @@ use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Output};
+use std::sync::{Mutex, MutexGuard};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use flake_show_ng::model::{Kind, Node};
@@ -18,6 +19,15 @@ use serde::Deserialize;
 const TESTED_BIN: &str = env!("CARGO_BIN_EXE_fsn");
 
 const RESERVED: &[&str] = &["case.json", "stdout", "stderr", "show"];
+
+// Nix's sandboxed chroot store uses a single SQLite database; two concurrent
+// `nix` invocations can race during initialization and one fails with
+// "database is busy". The integration tests share one process, so serialize them.
+static NIX_TEST_LOCK: Mutex<()> = Mutex::new(());
+
+fn nix_test_lock() -> MutexGuard<'static, ()> {
+    NIX_TEST_LOCK.lock().unwrap_or_else(|err| err.into_inner())
+}
 
 struct Sample {
     name: String,
@@ -446,6 +456,7 @@ fn preflight(samples: &[Sample]) -> Vec<String> {
 
 #[test]
 fn flake_flag_uses_the_given_directory() {
+    let _lock = nix_test_lock();
     if Command::new("nix").arg("--version").output().is_err() {
         return;
     }
@@ -486,6 +497,7 @@ fn flake_flag_uses_the_given_directory() {
 
 #[test]
 fn sim_samples() {
+    let _lock = nix_test_lock();
     let sim = sim_dir();
     let samples = match discover(&sim) {
         Ok(samples) => samples,
