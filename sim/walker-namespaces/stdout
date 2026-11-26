@@ -1,8 +1,7 @@
-[1mpath:/tmp/fsn-record-8AdfFF/walker-namespaces?lastModified=1791549319&narHash=sha256-LIyxAtGxoqFI9VuTtcR4zNGdItBEpW8oKeiRFd/8Rcw%3D[0m
+[1mpath:/tmp/opencode/fsn-record-walker-namespaces?lastModified=1795703577&narHash=sha256-mfrUqeu6Fh2zoFKVfzdqOTpQVNF0b1QmE4A0tYRe%2Biw%3D[0m
 [32;1m├───[0m[1mchecks[0m
 [32;1m│   └───[0m[1mx86_64-linux[0m
-[32;1m│       └───[0m[1mdeep[0m
-[32;1m│           └───[0m[1mleaf[0m: derivation 'chk'
+[32;1m│       └───[0m[1mdeep[0m: derivation 'chk'
 [32;1m├───[0m[1mdarwinConfigurations[0m
 [32;1m│   └───[0m[1mmac1[0m: [35;1mnix-darwin configuration[0m
 [32;1m├───[0m[1mdefaultPackage[0m

@@ -54,7 +54,7 @@
         "echo shell > $out"
       ];
     };
-    checks.x86_64-linux.deep.leaf = derivation {
+    checks.x86_64-linux.deep = derivation {
       name = "chk";
       system = "x86_64-linux";
       builder = "/bin/sh";

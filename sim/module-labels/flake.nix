@@ -1,5 +1,6 @@
 {
   outputs = { self }: {
+    darwinModules.foo = { config, ... }: { };
     homeModules.bar = { config, ... }: { };
     nixosModules.foo = { config, ... }: { };
     overlays.default = final: prev: { };

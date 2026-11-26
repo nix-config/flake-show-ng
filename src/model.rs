@@ -15,6 +15,7 @@ pub enum Kind {
     NixosModule,
     NixpkgsOverlay,
     HomeModule,
+    DarwinModule,
     Function,
     String,
     Int,
@@ -24,14 +25,14 @@ pub enum Kind {
     Null,
     List,
     Error,
-    /// Forward-compatible fallback: a stray wire value renders as a bare name
-    /// node instead of failing the whole run.
+    /// Forward-compatible fallback:
+    /// a stray wire value renders as a bare name node instead of failing the whole run.
     #[serde(other)]
     Unknown,
 }
 
-/// Closed on purpose: only the walker's namespace table produces this, so an
-/// unlisted value is a protocol violation. `Kind::Unknown` is the opposite case.
+/// Closed on purpose: only the walker's namespace table produces this,
+/// so an unlisted value is a protocol violation. `Kind::Unknown` is the opposite case.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum Label {
@@ -48,8 +49,8 @@ pub enum ConfigType {
     Darwin,
 }
 
-// Explicit JSON null must survive as `Some(None)`; a plain `Option` would
-// collapse it into a missing field.
+// Explicit JSON null must survive as `Some(None)`,
+// a plain `Option` would collapse it into a missing field.
 fn double_option<'de, T, D>(deserializer: D) -> Result<Option<Option<T>>, D::Error>
 where
     T: Deserialize<'de>,
@@ -81,6 +82,8 @@ pub struct WalkerOutput {
     pub tree: Vec<Node>,
     #[serde(rename = "unknownParts", default)]
     pub unknown_parts: Vec<UnknownPart>,
+    #[serde(default)]
+    pub warnings: Vec<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -114,6 +117,7 @@ mod tests {
             (Kind::NixosModule, "nixos-module"),
             (Kind::NixpkgsOverlay, "nixpkgs-overlay"),
             (Kind::HomeModule, "home-module"),
+            (Kind::DarwinModule, "darwin-module"),
             (Kind::Function, "function"),
             (Kind::String, "string"),
             (Kind::Int, "int"),
@@ -149,7 +153,8 @@ mod tests {
             ],
             "unknownParts": [
                 {"part": ["nope","x"], "failAt": ["nope"], "candidates": [["a"], ["b"]]}
-            ]
+            ],
+            "warnings": ["warning: packages.x86_64-linux.notdrv is not a derivation"]
         }"#;
         let parsed: WalkerOutput = serde_json::from_str(raw).unwrap();
         assert_eq!(parsed.tree.len(), 1);
@@ -161,5 +166,9 @@ mod tests {
         assert_eq!(parsed.unknown_parts[0].part, p("nope.x"));
         assert_eq!(parsed.unknown_parts[0].fail_at, p("nope"));
         assert_eq!(parsed.unknown_parts[0].candidates, vec![p("a"), p("b")]);
+        assert_eq!(
+            parsed.warnings,
+            vec!["warning: packages.x86_64-linux.notdrv is not a derivation"]
+        );
     }
 }

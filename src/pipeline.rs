@@ -6,9 +6,9 @@ use crate::model::UnknownPart;
 use crate::{legacy, nix, render};
 
 pub fn run(filters: Filters, flake: &Path) -> Result<String, Error> {
-    // Ordering constraint: the swallow notices are printed here, immediately
-    // after resolving and before the flake path checks, in the resolution
-    // report order, so the stderr bytes and order are unchanged.
+    // Ordering constraint: the swallow notices are printed here,
+    // immediately after resolving and before the flake path checks,
+    // in the resolution report order, so the stderr bytes and order are unchanged.
     for (swallowed, ancestor) in &filters.parts.notices {
         eprintln!(
             "{}part '{swallowed}' is covered by ancestor part '{ancestor}'; not rendered separately",
@@ -18,10 +18,12 @@ pub fn run(filters: Filters, flake: &Path) -> Result<String, Error> {
 
     ensure_flake_present(flake)?;
 
-    // The walker takes the locked ref plus typed parts. A plain path ref
-    // bypasses Nix's flake eval cache and re-evaluates every run.
+    // The walker takes the locked ref plus typed parts.
+    // A plain path ref bypasses Nix's flake eval cache and re-evaluates every run.
     let locked_ref = nix::flake_metadata(flake)?;
     let walker = nix::eval_tree(flake, &locked_ref, &filters.parts.roots, filters.allow_ifd)?;
+
+    nix::print_warnings(&walker.warnings);
 
     if !walker.unknown_parts.is_empty() {
         report_unknown_parts(&walker.unknown_parts);

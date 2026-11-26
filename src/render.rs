@@ -49,8 +49,8 @@ fn render_nodes(out: &mut String, nodes: &[Node], prefix: &mut String) {
 
 fn annotation(out: &mut String, node: &Node) {
     match node.kind {
-        // The walker always sets `drvName` on derivation nodes, so there is no
-        // defensive "unknown" fallback.
+        // The walker always sets `drvName` on derivation nodes,
+        // so there is no defensive "unknown" fallback.
         Kind::Derivation => {
             if let Some(drv) = node.drv_name.as_deref() {
                 out.push_str(": ");
@@ -85,7 +85,11 @@ fn annotation(out: &mut String, node: &Node) {
         }
         Kind::HomeModule => {
             out.push_str(": ");
-            styled(out, MAGENTA_BOLD, "Home module");
+            styled(out, MAGENTA_BOLD, "Home Manager module");
+        }
+        Kind::DarwinModule => {
+            out.push_str(": ");
+            styled(out, MAGENTA_BOLD, "Darwin module");
         }
         Kind::Error => {
             out.push_str(": ");

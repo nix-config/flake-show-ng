@@ -26,8 +26,9 @@ fn exit_code(status: std::process::ExitStatus) -> String {
     }
 }
 
-// Nix disables coloring when its stderr is a pipe, but fsn always colors its
-// own output; restore the warning style when our stderr is a terminal.
+// Nix disables coloring when its stderr is a pipe,
+// but fsn always colors its own output,
+// restore the warning style when our stderr is a terminal.
 fn style_warnings(stderr: &[u8]) -> Vec<u8> {
     let mut out = Vec::with_capacity(stderr.len());
     for line in stderr.split_inclusive(|&b| b == b'\n') {
@@ -50,14 +51,27 @@ fn forward_stderr(stderr: &[u8]) {
     let _ = err.flush();
 }
 
+pub fn print_warnings(warnings: &[String]) {
+    if warnings.is_empty() {
+        return;
+    }
+    let mut text = String::new();
+    for warning in warnings {
+        text.push_str(warning);
+        text.push('\n');
+    }
+    forward_stderr(text.as_bytes());
+}
+
 fn run_nix(mut cmd: Command) -> Result<std::process::Output, Error> {
     cmd.output()
         .map_err(|e| Error::msg(format!("{NIX_MISSING_MSG}: {e}")))
 }
 
-/// A string contract with Nix's own error text: if upstream rewords it, this
-/// detection and its test must change. The exit code alone drives the error
-/// path; this only decides whether to add the hint.
+/// A string contract with Nix's own error text:
+/// if upstream rewords it, this detection and its test must change.
+/// The exit code alone drives the error path,
+/// this only decides whether to add the hint.
 fn stderr_mentions_ifd(stderr: &[u8]) -> bool {
     String::from_utf8_lossy(stderr).contains(IFD_OPTION)
 }
@@ -68,8 +82,8 @@ fn eval_args(expr: &str, allow_ifd: bool) -> Vec<String> {
         "--impure".to_owned(),
         "--no-write-lock-file".to_owned(),
         "--json".to_owned(),
-        // `flake_metadata` already forwards the dirty-tree warning; the walker
-        // resolves the same ref and would otherwise print it a second time.
+        // `flake_metadata` already forwards the dirty-tree warning,
+        // the walker resolves the same ref and would otherwise print it a second time.
         "--option".to_owned(),
         "warn-dirty".to_owned(),
         "false".to_owned(),

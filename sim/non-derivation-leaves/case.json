@@ -1,8 +1,10 @@
 {
   "kinds": {
     "packages.x86_64-linux.notdrv": "attrset",
-    "packages.x86_64-linux.notdrv.name": "string",
-    "checks.x86_64-linux.mkCheck.name": "string",
-    "devShells.x86_64-linux.shell.name": "string"
-  }
+    "checks.x86_64-linux.mkCheck": "attrset",
+    "devShells.x86_64-linux.shell": "attrset"
+  },
+  "stderr_contains": [
+    "is not a derivation"
+  ]
 }

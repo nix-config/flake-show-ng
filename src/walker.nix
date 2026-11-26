@@ -3,14 +3,46 @@
   partsJson ? builtins.getEnv "FSN_PARTS_JSON",
 }:
 let
-  # `eval_tree` always sets `FSN_PARTS_JSON` (at minimum `[]`), so there is no
-  # empty-string branch to guard.
+  # `eval_tree` always sets `FSN_PARTS_JSON` (at minimum `[]`),
+  # so there is no empty-string branch to guard.
   parts = builtins.fromJSON partsJson;
 
   outputs = (builtins.getFlake flakePath).outputs or { };
 
   # Hard recursion guard, same value as the old flake-tree.sh baseline.
   depthCap = 100;
+
+  # Core outputs have schema-defined element kinds,
+  # these extra namespaces are conventions whose leaves are still identifiable by their own kinds.
+  fixedDepth = {
+    packages = 3;
+    devShells = 3;
+    apps = 3;
+    checks = 3;
+    formatter = 2;
+    overlays = 2;
+    homeModules = 2;
+    darwinModules = 2;
+    nixosModules = 2;
+    nixosConfigurations = 2;
+    homeConfigurations = 2;
+    darwinConfigurations = 2;
+  };
+
+  expectedKind = {
+    packages = "derivation";
+    devShells = "derivation";
+    apps = "app";
+    checks = "derivation";
+    formatter = "derivation";
+  };
+
+  expectedWording = {
+    derivation = "a derivation";
+    app = "an app";
+  };
+
+  pathText = path: builtins.concatStringsSep "." path;
 
   # Hosts are semantic leaves; only the namespace-to-host level is typed.
   configTypeOf = {
@@ -19,8 +51,9 @@ let
     darwinConfigurations = "darwin";
   };
 
-  # Keyed on the top-level namespace; an unrecognised namespace keeps the plain
-  # `derivation` label, so the key is omitted there.
+  # Keyed on the top-level namespace,
+  # an unrecognised namespace keeps the plain `derivation` label,
+  # so the key is omitted there.
   labelByNamespace = {
     packages = "package";
     legacyPackages = "package";
@@ -39,7 +72,7 @@ let
     else
       { };
 
-  # `nix flake show` labels these namespaces without inspecting their values;
+  # `nix flake show` labels these namespaces without inspecting their values,
   # `homeModules` is our extension because upstream show does not know it.
   semanticLeafKind =
     ns: depth:
@@ -55,6 +88,10 @@ let
       "home-module"
     else if depth == 1 && ns == "homeModule" then
       "home-module"
+    else if depth == 2 && ns == "darwinModules" then
+      "darwin-module"
+    else if depth == 1 && ns == "darwinModule" then
+      "darwin-module"
     else
       null;
 
@@ -66,8 +103,8 @@ let
       builtins.genList (i: i) (builtins.length pre)
     );
 
-  # Only `throw`/`assert` are catchable here (Nix 2.34.8: tryEval catches
-  # AssertionError only).  Anything else propagates and fails the whole run.
+  # Only `throw`/`assert` are catchable here (Nix 2.34.8: tryEval catches AssertionError only).
+  # Anything else propagates and fails the whole run.
   stringFieldOr =
     fallback: thunk:
     let
@@ -144,18 +181,18 @@ let
         kind = scalarKind value;
       };
 
-  # Every requested part that is strictly below `path`.  One shared rule for
-  # both `walkChildren`'s pruning set and the leaf/error fallback, so a part
-  # pointing below a derivation/error leaf is still reported as unknown
-  # (exit 1) instead of being silently swallowed.
+  # Every requested part that is strictly below `path`.
+  # One shared rule for both `walkChildren`'s pruning set and the leaf/error fallback,
+  # so a part pointing below a derivation/error leaf is still reported as unknown (exit 1),
+  # instead of being silently swallowed.
   partsBelow =
     path: builtins.filter (p: builtins.length p > builtins.length path && isPrefix path p) parts;
 
   unknownAt = path: candidates: p: {
     part = p;
     failAt = path;
-    # Sibling candidates are single-component paths so Rust can Display them
-    # through the same AttrPath path, keeping the notice wording byte-identical.
+    # Sibling candidates are single-component paths so Rust can Display them through the same AttrPath path,
+    # keeping the notice wording byte-identical.
     candidates = map (c: [ c ]) candidates;
   };
 
@@ -174,16 +211,20 @@ let
     in
     {
       children = map (w: w.node) walked;
-      unknown = builtins.concatMap (w: w.unknown) walked ++ builtins.map (unknownAt path names) missing;
+      unknown = builtins.concatMap (w: w.unknown) walked ++ map (unknownAt path names) missing;
+      warnings = builtins.concatMap (w: w.warnings) walked;
     };
 
   walk =
     path: value:
     let
       depth = builtins.length path;
+      ns = builtins.head path;
+      atFixedDepth = builtins.hasAttr ns fixedDepth && depth == fixedDepth.${ns};
+      expected = if atFixedDepth && builtins.hasAttr ns expectedKind then expectedKind.${ns} else null;
       probed = builtins.tryEval (classify path value);
-      # Parts strictly below this path that cannot be drilled into, either
-      # because evaluation failed here or because this is a leaf.
+      # Parts strictly below this path that cannot be drilled into,
+      # either because evaluation failed here or because this is a leaf.
       fallbackUnknown = map (unknownAt path [ ]) (partsBelow path);
     in
     if !probed.success then
@@ -194,12 +235,13 @@ let
           kind = "error";
         };
         unknown = fallbackUnknown;
+        warnings = [ ];
       }
     else
       let
         info = probed.value;
       in
-      if info.kind == "attrset" && builtins.isAttrs value && depth < depthCap then
+      if info.kind == "attrset" && builtins.isAttrs value && depth < depthCap && !atFixedDepth then
         let
           children = walkChildren path value;
         in
@@ -208,11 +250,20 @@ let
             inherit (children) children;
           };
           inherit (children) unknown;
+          inherit (children) warnings;
         }
       else
+        let
+          warnings =
+            if expected != null && info.kind != expected then
+              [ "warning: ${pathText path} is not ${expectedWording.${expected}}" ]
+            else
+              [ ];
+        in
         {
           node = info;
           unknown = fallbackUnknown;
+          inherit warnings;
         };
 
   root = walkChildren [ ] outputs;
@@ -220,4 +271,5 @@ in
 {
   tree = root.children;
   unknownParts = root.unknown;
+  warnings = root.warnings;
 }

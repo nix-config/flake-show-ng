@@ -1,6 +1,8 @@
-[1mpath:/tmp/opencode/module-labels-record?lastModified=1795255383&narHash=sha256-5l6ZJEANw23v9kmP5gppz8tad3lHq9cCJ82x4q7VgiU%3D[0m
+[1mpath:/tmp/opencode/fsn-record-module-labels?lastModified=1795703577&narHash=sha256-oUHQbF6Ab1Kg%2Bj6IAQsVuh9TGURslJJ98taRLQfM4UY%3D[0m
+[32;1m├───[0m[1mdarwinModules[0m
+[32;1m│   └───[0m[1mfoo[0m: [35;1mDarwin module[0m
 [32;1m├───[0m[1mhomeModules[0m
-[32;1m│   └───[0m[1mbar[0m: [35;1mHome module[0m
+[32;1m│   └───[0m[1mbar[0m: [35;1mHome Manager module[0m
 [32;1m├───[0m[1mnixosModules[0m
 [32;1m│   └───[0m[1mfoo[0m: [35;1mNixOS module[0m
 [32;1m├───[0m[1moverlays[0m
