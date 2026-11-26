@@ -1,5 +1,5 @@
-//! `legacyPackages` is an untyped package-set escape hatch, so helper attrs from
-//! `makeScope` would otherwise drown the real packages.
+//! `legacyPackages` is an untyped package-set escape hatch,
+//! so helper attrs from `makeScope` would otherwise drown the real packages.
 
 use crate::model::{Kind, Node};
 
@@ -30,8 +30,8 @@ fn clean_node(node: &mut Node) -> bool {
         return false;
     };
 
-    // A natively empty system must survive for `--empty`; a container that only
-    // became empty because its helpers were removed must not.
+    // A natively empty system must survive for `--empty`,
+    // a container that only became empty because its helpers were removed must not.
     let originally_empty = children.is_empty();
     children.retain_mut(clean_node);
     !children.is_empty() || originally_empty

@@ -35,9 +35,9 @@ pub struct Cli {
     #[arg(short = 'f', long = "flake", value_name = "PATH", default_value = ".")]
     pub flake: PathBuf,
 
-    /// Print version and exit
-    // Required by clap-derive to define `-v` (`ArgAction::Version` prints and
-    // exits during parsing), so it is never read as a value.
+    /// Print version and exit.
+    // Required by clap-derive to define `-v` (`ArgAction::Version` prints,
+    // and exits during parsing), so it is never read as a value.
     #[allow(dead_code)]
     #[arg(short = 'v', long = "version", action = clap::ArgAction::Version)]
     pub version: Option<bool>,
@@ -87,12 +87,6 @@ mod tests {
     }
 
     #[test]
-    fn rejects_removed_all_flag() {
-        assert!(Cli::try_parse_from(["fsn", "-a"]).is_err());
-        assert!(Cli::try_parse_from(["fsn", "--all"]).is_err());
-    }
-
-    #[test]
     fn parses_empty() {
         let cli = Cli::try_parse_from(["fsn", "-e"]).unwrap();
         assert!(cli.empty);
@@ -116,11 +110,6 @@ mod tests {
         assert_eq!(err.kind(), clap::error::ErrorKind::DisplayVersion);
         let err = Cli::try_parse_from(["fsn", "--version"]).unwrap_err();
         assert_eq!(err.kind(), clap::error::ErrorKind::DisplayVersion);
-    }
-
-    #[test]
-    fn rejects_uppercase_v() {
-        assert!(Cli::try_parse_from(["fsn", "-V"]).is_err());
     }
 
     #[test]

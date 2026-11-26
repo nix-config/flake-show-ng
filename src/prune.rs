@@ -20,8 +20,8 @@ impl EmptyPolicy {
     }
 }
 
-/// Leaves have no children and always survive, so only attrsets that bottom out
-/// in nothing disappear.
+/// Leaves have no children and always survive,
+/// so only attrsets that bottom out in nothing disappear.
 fn prune_empty(mut tree: Vec<Node>) -> Vec<Node> {
     prune_children(&mut tree);
     tree

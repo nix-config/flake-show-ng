@@ -1,10 +1,10 @@
-//! No anyhow: every failure is one of four variants and every user-facing line
-//! shares one prefix; clap owns exit code 2, so all variants map to 1.
+//! No anyhow: every failure is one of four variants and every user-facing line shares one prefix,
+//! clap owns exit code 2, so all variants map to 1.
 
 use std::fmt;
 
-/// The one prefix shared by the error report and both notices, so they stay
-/// byte-identical.
+/// The one prefix shared by the error report and both notices,
+/// so they stay byte-identical.
 pub fn stderr_prefix() -> &'static str {
     "fsn: "
 }

@@ -23,10 +23,6 @@ impl AttrPath {
     pub fn is_prefix_of(&self, other: &AttrPath) -> bool {
         self.0.len() <= other.0.len() && other.0.starts_with(&self.0)
     }
-
-    pub fn ancestors(&self) -> impl Iterator<Item = AttrPath> + '_ {
-        (1..self.0.len()).map(|len| AttrPath(self.0[..len].to_vec()))
-    }
 }
 
 impl fmt::Display for AttrPath {
@@ -101,14 +97,5 @@ mod tests {
         assert!(!p("a.b").is_prefix_of(&p("a")));
         assert!(!p("a.b").is_prefix_of(&p("a.c")));
         assert!(!p("ab").is_prefix_of(&p("a.b")));
-    }
-
-    #[test]
-    fn ancestors_are_outermost_first() {
-        assert_eq!(
-            p("a.b.c").ancestors().collect::<Vec<_>>(),
-            vec![p("a"), p("a.b")]
-        );
-        assert_eq!(p("a").ancestors().count(), 0);
     }
 }
